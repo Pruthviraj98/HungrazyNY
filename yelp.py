@@ -97,7 +97,7 @@ if __name__=='__main__':
     awsauth = AWS4Auth(credentials.access_key, credentials.secret_key, 'us-east-1', service)
     response_restaurants=scrape_yelp_data(api, api_key, "indpak", "manhattan")+scrape_yelp_data(api, api_key, "italian", "manhattan")+scrape_yelp_data(api, api_key, "mexican", "manhattan")+scrape_yelp_data(api, api_key, "chinese", "manhattan")+scrape_yelp_data(api, api_key, "mideastern", "manhattan")
     esClient = Elasticsearch(
-        hosts=[{'host': "search-restaurants-dkzrlqqt4trhmdu5ujg3icvjba.us-east-1.es.amazonaws.com",'port':443}],
+        hosts=[{'host': "https://search-hungrazyny-tbgoyfw7p2ymxkdftbqeeeqgw4.us-east-1.es.amazonaws.com/",'port':443}],
         use_ssl=True,
         verify_certs=True,
         connection_class=RequestsHttpConnection,
