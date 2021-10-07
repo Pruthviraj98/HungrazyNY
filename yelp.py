@@ -1,5 +1,5 @@
 import requests
-import simplejson as json
+import json
 import os
 from decimal import Decimal
 from elasticsearch import Elasticsearch, RequestsHttpConnection
@@ -14,7 +14,7 @@ def check_if_none(val):
     except:
         return True
 
-def get_business_attributes(business, location, cuisine_type):
+def get_business_attributes(business, location, cuisine_type, cuisine_name):
     attributes_dictionary={}
     attributes_dictionary['id']=business['id']
     attributes_dictionary['location']=location
@@ -24,7 +24,7 @@ def get_business_attributes(business, location, cuisine_type):
     if not check_if_none(business.get("rating",None)):
         attributes_dictionary["rating"] = Decimal(business["rating"])
     if not check_if_none(business.get("phone",None)):
-        attributes_dictionary["contact"] = business["phone"]
+        attributes_dictionary["contact"] = business["contact"]
     if not check_if_none(business.get("review_count",None)):
         attributes_dictionary["review_count"] = business["review_count"]
     if not check_if_none(business.get("price",None)):
@@ -39,60 +39,68 @@ def get_business_attributes(business, location, cuisine_type):
 
 
 def scrape_yelp_data(api, api_key, cuisine_type, location):
+    query= "?location={}".format(location)+"&categories={}".format(cuisine_type)+"&limit=50"
+    yelp_api=api+query
+    headers= {"Authorization": "Bearer " + api_key}
+    #get all the responses
+    response= requests.get(yelp_api, headers=headers).json()
+    offset=0
+    total_responses=response['total']
     businesses=[]
-    for offset in range(0, 5000, 50):
-        parameters={'term':"Restaurants", 'location':'New York City', 'categories':cuisine_type, 'limit':50, 'offset':offset}
-        headers= {"Authorization": "Bearer " + api_key}    
-        response= requests.get(url=api, headers=headers, params=parameters).json()
-        if 'businesses' in response:
+    #loop untill the you reach end of all the responses
+    while(total_responses>=0):
+        #but json has pages. So, loop through all the pages untill its none
+        if response.get("businesses", None) is not None:
             response_businesses=response["businesses"]
+            #loop through businesses in the current page
+            responses_in_current_page=len(response_businesses)
+            #for every business in the current page, get the attribute and put it in the business array
             for business in response_businesses:
                 business_attributes=get_business_attributes(business, location, cuisine_type)
                 businesses.append(business_attributes)
+            #Decreased total responses by total responses parsed.
+            total_responses-=responses_in_current_page
+            #And increase the offset by number of businesses parsed
+            offset+=responses_in_current_page
+            #call the next page like this
+            response=requests.get(yelp_api+query+str(offset), headers=headers).json()
+        else:
+            break
     return businesses
 
-def put_data_to_open_search():
-    dynamoDB=boto3.resource('dynamodb', region_name='us-east-1', aws_access_key_id='AKIAZ43I5RB2KS62WRFI', aws_secret_access_key='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')
-    table=dynamoDB.Table('yelp-restaurants')   
-    host='search-hungrazy-sii2r2352getluqu2hlz2qptzi.us-east-1.es.amazonaws.com'
-    credentials = boto3.Session(region_name='us-east-1', aws_access_key_id='AKIAZ43I5RB2KS62WRFI', aws_secret_access_key='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').get_credentials()
-    auth=AWS4Auth(credentials.access_key, credentials.secret_key, 'us-east-1', 'es')
-    es=Elasticsearch(
-        hosts=[{'host':host, 'port':443}],
-        http_auth=auth,
-        use_ssl=True,
-        verify_certs=True,
-        connection_class=RequestsHttpConnection
-    )
-    table_details=table.scan()
-    items=table_details['Items']
-    for item in items:
-        document={
-            "id":item['id'],
-            'cuisine':item['cuisine_type']
-        }
-        es.index(index="restaurants", doc_type="restaurant", id=item['id'], body=document)
-        
+def put_data_to_open_search(response_restaurants, esClient):
+    db = boto3.resource('dynamodb')
+    table=db.Table('yelp-restaurants')
+    total_restaurants=len(response_restaurants)
+    batch_size=total_restaurants//20
+    remaining_batches = batch_size
+    start_index = -batch_size
 
-def put_data_to_database(restaurants):
-    dynamoDB=boto3.resource('dynamodb', region_name='us-east-1', aws_access_key_id='AKIAZ43I5RB2KS62WRFI', aws_secret_access_key='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')
-    table=dynamoDB.Table('yelp-restaurants')
-    total_count=0
-    for restaurant_dictionary in restaurants:
-        try:
-            table.put_item(Item=restaurant_dictionary)
-            total_count+=1
-        except:
-            pass
-    print('Total restaurants inserted : '+ str(total_count))
+    while remaining_batches!=0 :
+        start_index = start_index+batch_size
+        with table.batch_writer() as batch:
+            for restaurant in response_restaurants[start_index:start_index+batch_size]:
+                batch.put_item(Item=restaurant)
+        for restaurant in response_restaurants[start_index:start_index + batch_size]:
+            esClient.index(index='restaurant', doc_type='doc', body={
+                "id" : restaurant["id"],
+                "cuisine" : restaurant["cuisine_type"],
+            })
+        remaining_batches = remaining_batches-1
+
 
 if __name__=='__main__':
     api_key = 'UGfyjJYtEPxERNAf2oXPbzMImppLy1araZXiLxuBgAGPFWyrvAbOjgDJdC9SyqotRvy8jYkp0lUMyIvLMTT3Yo4LzTe009D1VGW3FJB3ZZlwQUFghD8_0OBePc9XYXYx'
     api='https://api.yelp.com/v3/businesses/search'
     service='es'
+    credentials = boto3.Session(region_name='us-east-1', aws_access_key_id='', aws_secret_access_key='').get_credentials()
+    awsauth = AWS4Auth(credentials.access_key, credentials.secret_key, 'us-east-1', service)
     response_restaurants=scrape_yelp_data(api, api_key, "indpak", "manhattan")+scrape_yelp_data(api, api_key, "italian", "manhattan")+scrape_yelp_data(api, api_key, "mexican", "manhattan")+scrape_yelp_data(api, api_key, "chinese", "manhattan")+scrape_yelp_data(api, api_key, "mideastern", "manhattan")
-    put_data_to_database(response_restaurants)
-    put_data_to_open_search()
-    with open('data/all_restaurants.json', 'w') as f:
-        temp=json.dumps(response_restaurants, indent=4, separators=(',', ':'))
-        f.write(temp) 
+    esClient = Elasticsearch(
+        hosts=[{'host': "https://search-hungrazyny-tbgoyfw7p2ymxkdftbqeeeqgw4.us-east-1.es.amazonaws.com/",'port':443}],
+        use_ssl=True,
+        verify_certs=True,
+        connection_class=RequestsHttpConnection,
+        http_auth=awsauth
+        )
+    put_data_to_open_search(response_restaurants, esClient)
