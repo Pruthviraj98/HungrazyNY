@@ -14,7 +14,7 @@ logger.setLevel(logging.DEBUG)
 def get_slots(intent_request):
     return intent_request['currentIntent']['slots']
     
-def send_sqs_message(QueueURL, msg_body):
+def push_to_sqs(QueueURL, msg_body):
     """
     :param QueueName: String name of existing SQS queue
     :param msg_body: String message body
@@ -29,7 +29,7 @@ def send_sqs_message(QueueURL, msg_body):
         # Send message to SQS queue
         response = sqs.send_message(
             QueueUrl=queue_url,
-            DelaySeconds=10,
+            DelaySeconds=0,
             MessageAttributes={
                 'cuisine': {
                     'DataType': 'String',
@@ -62,7 +62,8 @@ def send_sqs_message(QueueURL, msg_body):
         return None
     
     return response
- 
+        
+
     
     
 def elicit_slot(session_attributes, intent_name, slots, slot_to_elicit, message):
@@ -88,6 +89,7 @@ def validate_parameters(time_, cuisine, location, num_people, phone_number):
     
     # cuisine validation
     cuisine_types = ['chinese', 'indian', 'middleeastern', 'italian', 'mexican']
+    location_types = ['manhattan', 'new york', 'ny', 'nyc']
     if not cuisine:
         return build_validation_result(False, 'cuisine', 'What cuisine do you prefer?')
         
@@ -101,13 +103,19 @@ def validate_parameters(time_, cuisine, location, num_people, phone_number):
     # location validation
     if not location:
         return build_validation_result(False, 'location', 'Which city do you prefer?')
-
+    
+    elif location.lower() not in location_types:
+        return build_validation_result(False, 'location', 'We do not have any restaurant serving there, please enter nearby location')
+        
     # location validation
     if not num_people:
         return build_validation_result(False, 'num_people', 'How many of you are going?')
     
     if not phone_number:
         return build_validation_result(False, 'phNo', 'Please share your phone number')
+    
+    elif len(phone_number)!=10:
+        return build_validation_result(False, 'phNo', 'Please enter the correct phone_number'.format(phone_number))
     
     return build_validation_result(True, None, None)
 
@@ -123,8 +131,6 @@ def get_restaurants(intent_request):
     source = intent_request['invocationSource']
     
     if source == 'DialogCodeHook':
-        # Perform basic validation on the supplied input slots.
-        # Use the elicitSlot dialog action to re-prompt for the first violation detected.
         slots = get_slots(intent_request)
         
         time_ = slots["time"]
@@ -151,7 +157,7 @@ def get_restaurants(intent_request):
                               validation_result['message'])
 
 
-    res = send_sqs_message('https://sqs.us-east-1.amazonaws.com/680435484788/hungrazy', slot_dict)
+    res = push_to_sqs('https://sqs.us-east-1.amazonaws.com/680435484788/hungrazy', slot_dict)
     
     
     if res:
@@ -163,8 +169,8 @@ def get_restaurants(intent_request):
                          "message":
                             {
                               "contentType":"PlainText",
-                              "content": "Cool! we have received your request. You will soon have a message on your phone with recommendations enlisted! {},{},{},{},{}".format(
-                                  time_, cuisine, location, num_people, phone_number),
+                              "content": "We have received your request for {} cuisine. You will recieve recommendations to your number {}. Have a great day with your group of {} to dine at {} in the city of {}!".format(
+                                  cuisine, phone_number, num_people, time_, location),
                             }
                         }
         }
@@ -177,7 +183,7 @@ def get_restaurants(intent_request):
                          "message":
                             {
                               "contentType":"PlainText",
-                              "content": "We are experiencing problem. Please try after some time!",
+                              "content": "Sorry, come back after some time!",
                             }
                         }
                     }
