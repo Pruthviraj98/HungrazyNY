@@ -85,31 +85,30 @@ def build_validation_result(is_valid, violated_slot, message_content):
         'message': {'contentType': 'PlainText', 'content': message_content}
     }
 
-def validate_parameters(time_, cuisine, location, num_people, phone_number):
+def validate_parameters(_time_, cuisine_type, location, num_people, phone_number):
     
-    # cuisine validation
-    cuisine_types = ['chinese', 'indian', 'middleeastern', 'italian', 'mexican']
     location_types = ['manhattan', 'new york', 'ny', 'nyc']
-    if not cuisine:
-        return build_validation_result(False, 'cuisine', 'What cuisine do you prefer?')
-        
-    elif cuisine.lower() not in cuisine_types:
-        return build_validation_result(False, 'cuisine', 'We do not have any restaurant serving {}, would you like a different cuisine'.format(cuisine))
-    
-    # time validation
-    if not time_:
-        return build_validation_result(False, 'time', 'What time do you prefer?')
-    
-    # location validation
     if not location:
-        return build_validation_result(False, 'location', 'Which city do you prefer?')
+        return build_validation_result(False, 'location', 'Which city do you wanna eat at?')
     
     elif location.lower() not in location_types:
         return build_validation_result(False, 'location', 'We do not have any restaurant serving there, please enter nearby location')
+    
+    
+    cuisine_types = ['chinese', 'indian', 'middleeastern', 'italian', 'mexican']
+    if not cuisine_type:
+        return build_validation_result(False, 'cuisine', 'What type of cuisine do you prefer to have?')
         
-    # location validation
+    elif cuisine_type.lower() not in cuisine_types:
+        return build_validation_result(False, 'cuisine', 'We do not have any restaurant that serves {}, would you like a different cuisine'.format(cuisine_type))
+    
+    
+    if not _time_:
+        return build_validation_result(False, 'time', 'What time do you prefer?')
+    
+    
     if not num_people:
-        return build_validation_result(False, 'num_people', 'How many of you are going?')
+        return build_validation_result(False, 'num_people', 'How many people (including you) are going?')
     
     if not phone_number:
         return build_validation_result(False, 'phNo', 'Please share your phone number')
