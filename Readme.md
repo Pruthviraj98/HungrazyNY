@@ -3,6 +3,7 @@ Customer Service is a core service for a lot of businesses around the world and 
 
 ## Architechture diagram
 ![Alt text](https://github.com/Pruthviraj98/HungrazyNY/blob/main/Assignment%201%20architecture%20diagram.png?raw=true)
+https://github.com/Pruthviraj98/HungrazyNY/blob/main/outputs/Image%2010-9-21%20at%203.43%20PM.jpg?raw=true
 
 ## <b>Components</b>
 <ul>
@@ -19,4 +20,17 @@ Customer Service is a core service for a lot of businesses around the world and 
 </ul>  
 
 ## Demo / Output / Screenshots / Results
+
+![Alt text](https://github.com/Pruthviraj98/HungrazyNY/blob/main/outputs/Image%2010-9-21%20at%203.39%20PM.jpg?raw=true)
+
+![Alt text](https://github.com/Pruthviraj98/HungrazyNY/blob/main/outputs/Image%2010-9-21%20at%203.43%20PM.jpg?raw=true)
+
+![Alt text](https://github.com/Pruthviraj98/HungrazyNY/blob/main/outputs/Image%2010-9-21%20at%203.44%20PM.jpg?raw=true)
+
+![Alt text](https://github.com/Pruthviraj98/HungrazyNY/blob/main/outputs/IMG_144B945072BC-1.jpeg?raw=true)
+
+![Alt text](https://github.com/Pruthviraj98/HungrazyNY/blob/main/outputs/IMG_E38A3E328114-1.jpeg?raw=true)
+
+
+
 
