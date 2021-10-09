@@ -3,7 +3,6 @@ Customer Service is a core service for a lot of businesses around the world and 
 
 ## Architechture diagram
 ![Alt text](https://github.com/Pruthviraj98/HungrazyNY/blob/main/Assignment%201%20architecture%20diagram.png?raw=true)
-https://github.com/Pruthviraj98/HungrazyNY/blob/main/outputs/Image%2010-9-21%20at%203.43%20PM.jpg?raw=true
 
 ## <b>Components</b>
 <ul>
