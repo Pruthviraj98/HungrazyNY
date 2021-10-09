@@ -21,8 +21,6 @@ https://github.com/Pruthviraj98/HungrazyNY/blob/main/outputs/Image%2010-9-21%20a
 
 ## Demo / Output / Screenshots / Results
 
-<img src="https://github.com/Pruthviraj98/HungrazyNY/blob/main/outputs/Image%2010-9-21%20at%203.39%20PM.jpg?raw=true" width="1000" height="700">
-
 ![Alt text](https://github.com/Pruthviraj98/HungrazyNY/blob/main/outputs/Image%2010-9-21%20at%203.39%20PM.jpg?raw=true)
 
 
