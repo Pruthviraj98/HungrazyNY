@@ -20,16 +20,16 @@ Customer Service is a core service for a lot of businesses around the world and 
 
 ## Demo / Output / Screenshots / Results
 
-![Alt text](https://github.com/Pruthviraj98/HungrazyNY/blob/main/outputs/Image%2010-9-21%20at%203.39%20PM.jpg?raw=true)
+<img src="https://github.com/Pruthviraj98/HungrazyNY/blob/main/outputs/Image%2010-9-21%20at%203.39%20PM.jpg?raw=true" width="800" height="500">
 
+<img src="https://github.com/Pruthviraj98/HungrazyNY/blob/main/outputs/Image%2010-9-21%20at%203.43%20PM.jpg?raw=true" width="800" height="500">
 
-![Alt text](https://github.com/Pruthviraj98/HungrazyNY/blob/main/outputs/Image%2010-9-21%20at%203.43%20PM.jpg?raw=true)
+<img src="https://github.com/Pruthviraj98/HungrazyNY/blob/main/outputs/Image%2010-9-21%20at%203.44%20PM.jpg?raw=true" width="800" height="500">
 
-![Alt text](https://github.com/Pruthviraj98/HungrazyNY/blob/main/outputs/Image%2010-9-21%20at%203.44%20PM.jpg?raw=true)
+<img src="https://github.com/Pruthviraj98/HungrazyNY/blob/main/outputs/IMG_144B945072BC-1.jpeg?raw=true" width="800" height="500">
 
-![Alt text](https://github.com/Pruthviraj98/HungrazyNY/blob/main/outputs/IMG_144B945072BC-1.jpeg?raw=true)
+<img src="https://github.com/Pruthviraj98/HungrazyNY/blob/main/outputs/IMG_E38A3E328114-1.jpeg?raw=true" width="800" height="500">
 
-![Alt text](https://github.com/Pruthviraj98/HungrazyNY/blob/main/outputs/IMG_E38A3E328114-1.jpeg?raw=true)
 
 
 
