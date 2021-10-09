@@ -58,30 +58,9 @@ def get_sqs_data(queue_URL):
         return messages
     
     except ClientError as e:
-        logging.error(e) 
+        logging.error(e)
         return []
         
-        
-def compose_es_payload(msg_attributes, n):
-    epoch = datetime.datetime.utcfromtimestamp(0)
-    seed = (datetime.datetime.utcnow() - epoch).total_seconds() * 1000.0
-    return {
-        "query": {
-            "function_score": {
-                "query": {
-                    "bool": {
-                        "must": [
-                            {"term": {"cuisine": msg_attributes['cuisine']['StringValue'].lower()}}
-                        ]
-                    }
-                },
-                "random_score": {"seed": str(seed)},
-                "score_mode": "sum"
-            }
-        },
-        "from": 0,
-        "size": n
-    }
 
 def es_search(host, query):
     awsauth = AWSRequestsAuth(aws_access_key='AKIAZ43I5RB2F2QLHFOL',
@@ -99,7 +78,6 @@ def es_search(host, query):
         connection_class=RequestsHttpConnection)
     
     es_result=esClient.search(index="restaurants", body=query)    # response=es.get()
-    # print(es_result)
     return es_result
     
     
@@ -132,32 +110,22 @@ def lambda_handler(event, context):
         msg_attributes=message['MessageAttributes']
         query = {"query": {"match": {"cuisine": msg_attributes["cuisine"]["StringValue"]}}}
         es_search_result = es_search(es_host, query)
-        print(es_search_result, "THISIISSS ITTTTTTT")
         number_of_records_found = int(es_search_result["hits"]["total"]["value"])
-        # print(es_result)
         hits = es_search_result['hits']['hits']
         suggested_restaurants = []
         for hit in hits:
             id = hit['_source']['id']
             suggested_restaurant = get_dynamo_data(dynamodb, table, id)
             suggested_restaurants.append(suggested_restaurant)
-        print(suggested_restaurants)
-        
+
         text = "Hello! Here are the "+msg_attributes['cuisine']['StringValue']+ " suggestions for "+msg_attributes['num_people']['StringValue']+" people at "+ msg_attributes['time']['StringValue']+" "
         for i,rest in enumerate(suggested_restaurants):
 	        text += "(" + str(i+1) + ")" + rest
         
-        print(text)
-        # logging.info(text)
-        
+
         phone_number = msg_attributes['phNo']
-        # arn="arn:aws:sns:us-east-1:680435484788:hungrazyChatBotSNS"
         sns_client = boto3.client('sns' , 'us-east-1')
-        # status = sns_client.publish(
-        #     Message=text, 
-        #     MessageStructure='string',
-        #     PhoneNumber = phone_number)
-            
+        
         response = sns_client.publish(
             TopicArn="arn:aws:sns:us-east-1:680435484788:hungrazy",
             Message=text
