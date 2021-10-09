@@ -8,7 +8,7 @@ Customer Service is a core service for a lot of businesses around the world and 
 <ul>
   <li> <h4> S3 Bucket </h4> </li> Used to deploy the front-end starter application to interface with the chatbot
   <li> <h4> API Gateway </h4> </li> API Gateway handles all the tasks involved in accepting and processing up to hundreds of thousands of concurrent API calls, including traffic management, CORS support, authorization and access control,
-  <li> <h4> Amazon Lex </h4> </li> Amazon Lex is a web service that allows customers to include conversational interfaces for voice and text in the software applications they are developing.
+  <li> <h4> Amazon Lex (Version 1)</h4> </li> Amazon Lex is a web service that allows customers to include conversational interfaces for voice and text in the software applications they are developing.
   <li> <h4> Lambda Function 0 (LF0) </h4> </li> Implemented LF0 to facilitate chat operation using request/response model (interfaces) specified in the API  
   <li> <h4> Lambda Function 1 (LF1) </h4> </li> Used LF1 as a code hook for Lex to manipulate and validate parameters as well as format the bot’s responses, which essentially entails the invocation of Lambda before Lex responds to any requests.  
   <li> <h4> Lambda Function 2 (LF2) </h4> </li> Developed LF2 to perform Open search on the data to get the top 5 results corresponding to the user's query and fetch the details from DynamoDB. The recommendations are sent to the users via email using Amazon SNS service.
