@@ -2,7 +2,7 @@
 Customer Service is a core service for a lot of businesses around the world and it is getting disrupted at the moment by Natural Language Processing-powered applications. Hungrazy is a server-less, microservice-driven web application specifically, a Dining Concierge chat bot that sends you restaurant suggestions given a set of preferences that you provide the chat bot with through conversation.
 
 ## Architechture diagram
-![Alt text](https://brightspace.nyu.edu/content/enforced/131553-FA21_CS-GY_9223_1_I/Assignment%201%20architecture%20diagram.png?_&d2lSessionVal=1NvMqilrhb1tR5igqPVmhM5Tn)
+![Alt text](https://github.com/Pruthviraj98/HungrazyNY/blob/main/Assignment%201%20architecture%20diagram.png?raw=true)
 
 ## <b>Components</b>
 <ul>
