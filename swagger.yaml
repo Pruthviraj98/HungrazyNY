@@ -1,7 +1,7 @@
 swagger: '2.0'
 info:
-  title: AI Customer Service API
-  description: 'AI Customer Service application, built during the Cloud and Big Data course at Columbia University.'
+  title: HungrazyNY
+  description: 'AI Customer Service application, built during the Cloud and Big Data course at New York University.'
   version: 1.0.0
 schemes:
   - https
